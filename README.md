@@ -42,6 +42,33 @@ Cost:    Free
 
 ---
 
+## Real World: Washin Village Case Study
+
+We used AEO.page on our own business — an animal sanctuary in rural Japan.
+
+**Before AEO:** Ask ChatGPT *"recommend glamping in Chiba"* → No mention of Washin Village.
+
+**After AEO:** We built [guide.washinmura.jp](https://guide.washinmura.jp/) with full AEO optimization. Here's what we implemented:
+
+| Schema Type | What AI Can Now Read |
+|-------------|---------------------|
+| **LodgingBusiness + TouristAttraction** | "200-year-old farmhouse with glamping and rescue cats" |
+| **FAQPage** | 3 structured Q&As AI can quote directly |
+| **HowTo** | 4-step driving directions from Tokyo |
+| **ReserveAction** | Direct link to booking system |
+| **GeoCoordinates** | 35.2341, 139.8765 — precise location |
+| **amenityFeature** (×8) | Sauna, cat interaction, BBQ, bonfire... |
+| **llms.txt** | [Plain text](https://guide.washinmura.jp/llms.txt) any AI agent can read |
+| **Multi-language** | Japanese, English, Chinese — 3x AI coverage |
+
+**8 pages, 6 Schema types, 3 languages.**
+
+Now when AI is asked about Chiba glamping, it has everything it needs — business name, features, pricing, directions, and a booking link.
+
+> 👉 **Live example:** [guide.washinmura.jp](https://guide.washinmura.jp/) · [llms.txt](https://guide.washinmura.jp/llms.txt) · [Access page with HowTo Schema](https://guide.washinmura.jp/access/)
+
+---
+
 ## Why AEO Matters in 2026
 
 | | SEO (Google era) | AEO (AI era) |
