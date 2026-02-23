@@ -1,46 +1,61 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AEO.page — Paste your URL. Get found by AI.</title>
-<meta name="description" content="讓 AI 找到你的店。貼上網址，AI 自動檢測友善度，一鍵生成 JSON-LD、llms.txt、FAQ Schema。免費。">
+<title>AEO.page — Get Found by AI. Free AI-Friendliness Scanner.</title>
+<meta name="description" content="Can't get found by ChatGPT, Claude, or Perplexity? Paste your URL — we diagnose the problem and generate JSON-LD, llms.txt, FAQ Schema in one click. Free.">
 <link rel="canonical" href="https://api.washinmura.jp/aeo">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="AEO.page — 讓 AI 找到你的店">
-<meta property="og:description" content="ChatGPT、Claude、Perplexity 找不到你的店？貼上網址，AI 診斷問題並生成修復代碼。免費。">
+<meta property="og:title" content="AEO.page — Get Found by AI">
+<meta property="og:description" content="Free AI-friendliness scanner. Paste your URL, get a score out of 100, and generate JSON-LD, llms.txt, FAQ Schema to help AI recommend your business.">
 <meta property="og:url" content="https://api.washinmura.jp/aeo">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta property="og:site_name" content="AEO.page">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AEO.page — Paste your URL. Get found by AI.">
-<meta name="twitter:description" content="Free AI-friendliness checker. Generate JSON-LD, llms.txt, FAQ Schema in one click.">
+<meta name="twitter:title" content="AEO.page — Get Found by AI">
+<meta name="twitter:description" content="Free AI-friendliness scanner. Generate JSON-LD, llms.txt, FAQ Schema in one click.">
 
-<!-- JSON-LD -->
+<!-- JSON-LD: WebApplication -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "AEO.page",
-  "alternateName": "Agent Engine Optimization",
+  "alternateName": ["Agent Engine Optimization", "AEO ページ"],
   "url": "https://api.washinmura.jp/aeo",
-  "description": "AI 友善度檢測工具。貼上網址，自動診斷並生成 JSON-LD、llms.txt、FAQ Schema。",
+  "description": "Free AI-friendliness scanner for websites. Diagnoses discoverability issues and generates JSON-LD, llms.txt, and FAQ Schema so AI assistants like ChatGPT, Claude, and Perplexity can find and recommend your business.",
   "applicationCategory": "SEO Tool",
   "operatingSystem": "Web",
+  "inLanguage": ["en", "ja", "zh-TW"],
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD"
   },
+  "featureList": [
+    "AI-friendliness scoring (8 indicators, 100 points)",
+    "JSON-LD structured data generation",
+    "llms.txt auto-generation and hosting",
+    "Open Graph tag generation",
+    "FAQ Schema generation",
+    "AI deep analysis powered by Claude Sonnet",
+    "Japanese encoding support (Shift_JIS, EUC-JP)"
+  ],
   "creator": {
     "@type": "Organization",
-    "name": "和心村 washinmura",
+    "name": "Washin Village",
+    "alternateName": "和心村",
     "url": "https://washinmura.jp"
   }
 }
 </script>
 
-<!-- FAQ Schema -->
+<!-- JSON-LD: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -48,26 +63,50 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "AEO.page は何ができますか？",
+      "name": "What is AEO?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "ウェブサイトのURLを入力するだけで、AI（ChatGPT、Claude、Perplexity等）からの発見しやすさを診断し、JSON-LD、llms.txt、FAQ Schemaを自動生成します。無料です。"
+        "text": "AEO (Agent Engine Optimization) makes your website discoverable by AI assistants like ChatGPT, Claude, and Perplexity. While SEO optimizes for search engines, AEO optimizes for AI — so when someone asks AI to recommend a business, yours gets mentioned."
       }
     },
     {
       "@type": "Question",
-      "name": "AEO とは何ですか？",
+      "name": "What does AEO.page do?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "AEO（Agent Engine Optimization）は、AIエージェントがあなたのビジネスを見つけやすくする最適化です。SEOが検索エンジン向けなら、AEOはAI向けの最適化です。"
+        "text": "Paste any website URL and AEO.page scans it for AI-friendliness, scoring it out of 100 across 8 indicators (JSON-LD, llms.txt, Open Graph, FAQ Schema, etc.). It then generates ready-to-use fix code and hosts a free llms.txt file for your business."
       }
     },
     {
       "@type": "Question",
-      "name": "料金はかかりますか？",
+      "name": "Is AEO.page free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "完全無料です。スキャン、診断、コード生成、llms.txtホスティングすべて無料で提供しています。"
+        "text": "Yes, completely free. Scanning, diagnosis, code generation, and llms.txt hosting are all provided at no cost."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is llms.txt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "llms.txt is an emerging standard (like robots.txt for search engines) that helps AI agents quickly understand what a website is about. AEO.page auto-generates and hosts llms.txt for every scanned website."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "AEOとは何ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AEO（Agent Engine Optimization）は、ChatGPT、Claude、PerplexityなどのAIアシスタントにあなたのウェブサイトを発見してもらうための最適化です。SEOが検索エンジン向けなら、AEOはAI向けの最適化です。URLを入力するだけで、JSON-LD、llms.txt、FAQ Schemaを自動生成します。すべて無料です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "AEO 是什麼？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AEO（Agent Engine Optimization）讓 AI 助手（如 ChatGPT、Claude、Perplexity）能找到你的網站。SEO 是為搜尋引擎做最佳化，AEO 則是為 AI 做最佳化。貼上網址就能自動產生 JSON-LD、llms.txt、FAQ Schema。完全免費。"
       }
     }
   ]
@@ -75,7 +114,7 @@
 </script>
 
 <style>
-  /* === 基底 === */
+  /* === Base === */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
     --bg: #0a0a0f;
@@ -99,10 +138,10 @@
   a { color: var(--accent2); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  /* === 佈局 === */
+  /* === Layout === */
   .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
 
-  /* === Hero 區 === */
+  /* === Hero === */
   .hero {
     text-align: center;
     padding: 80px 0 40px;
@@ -117,10 +156,23 @@
   .hero .tagline {
     font-size: 1.2rem;
     color: var(--text2);
-    margin-bottom: 40px;
+    margin-bottom: 12px;
+  }
+  .hero .sub {
+    color: var(--text2);
+    font-size: 0.9rem;
+    max-width: 560px;
+    margin: 0 auto 32px;
+    line-height: 1.8;
+  }
+  .hero .sub .lang-alt {
+    font-size: 0.82rem;
+    color: #666;
+    display: block;
+    margin-top: 6px;
   }
 
-  /* === 掃描輸入框 === */
+  /* === Scan Input === */
   .scan-box {
     display: flex;
     gap: 12px;
@@ -155,7 +207,7 @@
   .scan-box button:hover { background: var(--accent2); transform: translateY(-1px); }
   .scan-box button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* === 載入動畫 === */
+  /* === Loading === */
   .loading {
     display: none;
     text-align: center;
@@ -173,14 +225,13 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading p { color: var(--text2); }
 
-  /* === 結果區 === */
+  /* === Results === */
   .results {
     display: none;
     padding: 40px 0 80px;
   }
   .results.active { display: block; }
 
-  /* 分數卡片 */
   .score-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -208,7 +259,6 @@
   .score-mid { color: var(--orange); }
   .score-high { color: var(--green); }
 
-  /* 問題清單 */
   .issues {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -230,7 +280,6 @@
   .issue-text strong { display: block; margin-bottom: 2px; }
   .issue-text span { font-size: 0.85rem; color: var(--text2); }
 
-  /* 生成代碼區 */
   .generated {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -272,7 +321,6 @@
     overflow-y: auto;
   }
 
-  /* llms.txt 託管連結 */
   .hosted-link {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     border: 1px solid var(--accent);
@@ -290,7 +338,6 @@
   }
   .hosted-link p { font-size: 0.85rem; color: var(--text2); margin-top: 8px; }
 
-  /* === 底部目錄 === */
   .directory {
     border-top: 1px solid var(--border);
     padding: 40px 0;
@@ -320,6 +367,16 @@
     color: var(--green);
   }
 
+  /* === Footer === */
+  .footer {
+    text-align: center;
+    padding: 32px 0 48px;
+    color: var(--text2);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--accent2); }
+
   /* === RWD === */
   @media (max-width: 600px) {
     .hero h1 { font-size: 2rem; }
@@ -335,59 +392,60 @@
 <section class="hero">
   <div class="container">
     <h1><span>AEO</span>.page</h1>
-    <p class="tagline">Paste your URL. Get found by AI. <br>貼上網址，讓 AI 找到你的店。</p>
-    <p style="color: var(--text2); font-size: 0.95rem; max-width: 520px; margin: 0 auto 32px; line-height: 1.8;">
-      ChatGPT、Claude、Perplexity 回答問題時，找不到你的店嗎？<br>
-      貼上網址，AI 幫你診斷問題，一鍵生成修復代碼。免費。<br>
-      <span style="font-size: 0.85rem; color: #666;">
-        Can't get found by AI? Paste your URL — we'll diagnose the problem and generate the fix. Free.
+    <p class="tagline">Paste your URL. Get found by AI.</p>
+    <p class="sub">
+      When someone asks ChatGPT to recommend a restaurant, a hotel, or a local shop — does AI know you exist?<br>
+      Paste your URL. We'll scan it, score it, and generate the fix code. Free.
+      <span class="lang-alt">
+        貼上你的網址，AI 幫你診斷問題並生成修復代碼。免費。<br>
+        URLを貼るだけ。AIがあなたのサイトを診断し、修正コードを自動生成します。無料。
       </span>
     </p>
     <div class="scan-box">
       <input type="url" id="urlInput" placeholder="https://your-website.com" autocomplete="url">
-      <button id="scanBtn" onclick="startScan()">掃描 Scan</button>
+      <button id="scanBtn" onclick="startScan()">Scan</button>
     </div>
   </div>
 </section>
 
-<!-- 載入中 -->
+<!-- Loading -->
 <section class="loading" id="loading">
   <div class="container">
     <div class="spinner"></div>
-    <p id="loadingText">正在讀取你的網站...</p>
-    <p style="color: var(--text2); font-size: 0.8rem; margin-top: 8px;">AI 深度分析約需 15-20 秒</p>
+    <p id="loadingText">Fetching your website...</p>
+    <p style="color: var(--text2); font-size: 0.8rem; margin-top: 8px;">AI deep analysis takes about 15–20 seconds</p>
   </div>
 </section>
 
-<!-- 結果 -->
+<!-- Results -->
 <section class="results" id="results">
   <div class="container">
 
-    <!-- 分數 -->
+    <!-- Score -->
     <div class="score-card">
       <div class="url" id="resultUrl"></div>
       <div class="score" id="scoreNum">--</div>
-      <div class="score-label">AI 友善度 / 100</div>
+      <div class="score-label">AI-Friendliness Score / 100</div>
     </div>
 
-    <!-- 問題清單 -->
+    <!-- Issues -->
     <div class="issues" id="issuesBox">
-      <h3>📋 檢測結果</h3>
+      <h3>Scan Results</h3>
       <div id="issuesList"></div>
     </div>
 
-    <!-- 託管的 llms.txt -->
+    <!-- Hosted llms.txt -->
     <div class="hosted-link" id="hostedBox" style="display:none">
-      <h3>✅ 你的 llms.txt 已上線</h3>
+      <h3>Your llms.txt is Live</h3>
       <div class="link" id="hostedUrl"></div>
-      <p>AI Agent 已經可以透過這個連結認識你的店了</p>
+      <p>AI Agents can now discover your business through this link</p>
     </div>
 
-    <!-- JSON-LD 代碼 -->
+    <!-- JSON-LD -->
     <div class="generated" id="jsonldBox" style="display:none">
       <h3>
-        JSON-LD 結構化數據
-        <button class="copy-btn" onclick="copyCode('jsonldCode', this)">複製</button>
+        JSON-LD Structured Data
+        <button class="copy-btn" onclick="copyCode('jsonldCode', this)">Copy</button>
       </h3>
       <div class="code-block" id="jsonldCode"></div>
     </div>
@@ -395,8 +453,8 @@
     <!-- OG Tags -->
     <div class="generated" id="ogBox" style="display:none">
       <h3>
-        Open Graph 社群標籤
-        <button class="copy-btn" onclick="copyCode('ogCode', this)">複製</button>
+        Open Graph Tags
+        <button class="copy-btn" onclick="copyCode('ogCode', this)">Copy</button>
       </h3>
       <div class="code-block" id="ogCode"></div>
     </div>
@@ -404,67 +462,71 @@
     <!-- FAQ Schema -->
     <div class="generated" id="faqBox" style="display:none">
       <h3>
-        FAQ 常見問答
-        <button class="copy-btn" onclick="copyCode('faqCode', this)">複製</button>
+        FAQ Schema
+        <button class="copy-btn" onclick="copyCode('faqCode', this)">Copy</button>
       </h3>
       <div class="code-block" id="faqCode"></div>
     </div>
 
-    <!-- 一鍵全部複製 -->
+    <!-- Copy All -->
     <div style="text-align: center; margin: 32px 0;">
       <button class="copy-btn" style="padding: 14px 40px; font-size: 1rem;" onclick="copyAll()">
-        📋 一鍵複製全部代碼
+        Copy All Code
       </button>
       <p style="color: var(--text2); font-size: 0.85rem; margin-top: 8px;">
-        複製後貼到你的網站 Header Code 即可
+        Paste into your website's &lt;head&gt; section
       </p>
     </div>
 
   </div>
 </section>
 
-<!-- 底部目錄 -->
+<!-- Directory -->
 <section class="directory" id="directory">
   <div class="container">
-    <h2>📖 AI 黃頁目錄</h2>
-    <p class="subtitle">這些店家已經被 AI 收錄了</p>
-    <div class="shop-grid" id="shopGrid">
-      <!-- 動態填入 -->
-    </div>
+    <h2>AI Directory</h2>
+    <p class="subtitle">These businesses are now discoverable by AI</p>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<section class="footer">
+  <div class="container">
+    <p>
+      Built by <a href="https://washinmura.jp">Washin Village</a> — an animal sanctuary in Chiba, Japan 🐾<br>
+      <a href="https://github.com/sstklen/aeo-page">GitHub</a> · MIT License · Free forever
+    </p>
   </div>
 </section>
 
 <script>
-// === 狀態 ===
 const API_BASE = window.location.origin;
 
-// === 掃描 ===
 async function startScan() {
   const url = document.getElementById('urlInput').value.trim();
-  if (!url) { alert('請輸入網址'); return; }
+  if (!url) { alert('Please enter a URL'); return; }
 
-  // 顯示載入
   const btn = document.getElementById('scanBtn');
   btn.disabled = true;
   document.getElementById('loading').classList.add('active');
   document.getElementById('results').classList.remove('active');
 
-  // 載入文字動畫（AI 分析需要 15-20 秒）
   const msgs = [
-    '正在讀取你的網站...',
-    '正在解析頁面內容...',
-    '🤖 AI 正在深度分析你的網站...',
-    '🤖 AI 正在提取商家特色和故事...',
-    '🤖 AI 正在生成 FAQ 和結構化數據...',
-    '快好了，最後整理中...',
-    '差不多了！AI 分析比較花時間 ☕'
+    'Fetching your website...',
+    'Parsing page content...',
+    'AI is analyzing your site...',
+    'AI is extracting business features...',
+    'AI is generating FAQ and structured data...',
+    'Almost done, finalizing...',
+    'Hang tight! AI analysis takes a moment...'
   ];
   let msgIdx = 0;
   let seconds = 0;
   const msgTimer = setInterval(() => {
     seconds += 2;
     msgIdx = Math.min(msgIdx + 1, msgs.length - 1);
-    document.getElementById('loadingText').textContent = msgs[msgIdx] + ` (${seconds}秒)`;
+    document.getElementById('loadingText').textContent = msgs[msgIdx] + ` (${seconds}s)`;
   }, 2000);
 
   try {
@@ -474,12 +536,12 @@ async function startScan() {
       body: JSON.stringify({ url })
     });
 
-    if (!res.ok) throw new Error(`掃描失敗 (${res.status})`);
+    if (!res.ok) throw new Error(`Scan failed (${res.status})`);
     const data = await res.json();
     displayResults(url, data);
 
   } catch (err) {
-    alert('掃描失敗：' + err.message);
+    alert('Scan failed: ' + err.message);
   } finally {
     clearInterval(msgTimer);
     btn.disabled = false;
@@ -487,16 +549,13 @@ async function startScan() {
   }
 }
 
-// === 顯示結果 ===
 function displayResults(url, data) {
-  // 分數
   document.getElementById('resultUrl').textContent = url;
   const scoreEl = document.getElementById('scoreNum');
   const score = data.score || 0;
   scoreEl.textContent = score;
   scoreEl.className = 'score ' + (score >= 70 ? 'score-high' : score >= 40 ? 'score-mid' : 'score-low');
 
-  // 問題清單
   const issuesList = document.getElementById('issuesList');
   issuesList.innerHTML = '';
   if (data.issues && data.issues.length > 0) {
@@ -514,44 +573,37 @@ function displayResults(url, data) {
     });
   }
 
-  // 託管的 llms.txt
   if (data.hostedUrl) {
     document.getElementById('hostedBox').style.display = 'block';
     document.getElementById('hostedUrl').textContent = data.hostedUrl;
   }
 
-  // JSON-LD
   if (data.jsonld) {
     document.getElementById('jsonldBox').style.display = 'block';
     document.getElementById('jsonldCode').textContent = data.jsonld;
   }
 
-  // OG Tags
   if (data.ogTags) {
     document.getElementById('ogBox').style.display = 'block';
     document.getElementById('ogCode').textContent = data.ogTags;
   }
 
-  // FAQ
   if (data.faqSchema) {
     document.getElementById('faqBox').style.display = 'block';
     document.getElementById('faqCode').textContent = data.faqSchema;
   }
 
   document.getElementById('results').classList.add('active');
-
-  // 滾動到結果
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
-// === 複製 ===
 function copyCode(elementId, btn) {
   const text = document.getElementById(elementId).textContent;
   navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '已複製 ✓';
+    btn.textContent = 'Copied ✓';
     btn.classList.add('copied');
     setTimeout(() => {
-      btn.textContent = '複製';
+      btn.textContent = 'Copy';
       btn.classList.remove('copied');
     }, 2000);
   });
@@ -563,13 +615,11 @@ function copyAll() {
     const el = document.getElementById(id);
     if (el && el.textContent) parts.push(el.textContent);
   });
-  const all = parts.join('\n\n');
-  navigator.clipboard.writeText(all).then(() => {
-    alert('已複製全部代碼！貼到你的網站 Header Code 即可。');
+  navigator.clipboard.writeText(parts.join('\n\n')).then(() => {
+    alert('All code copied! Paste into your website\'s <head> section.');
   });
 }
 
-// === 載入目錄 ===
 async function loadDirectory() {
   try {
     const res = await fetch(`${API_BASE}/api/aeo/directory`);
@@ -577,25 +627,23 @@ async function loadDirectory() {
     const shops = await res.json();
     const grid = document.getElementById('shopGrid');
     if (shops.length === 0) {
-      grid.innerHTML = '<p style="color: var(--text2); grid-column: 1/-1;">還沒有店家，成為第一個！</p>';
+      grid.innerHTML = '<p style="color: var(--text2); grid-column: 1/-1;">No businesses yet — be the first!</p>';
       return;
     }
     grid.innerHTML = shops.map(s => `
       <div class="shop-card">
         <div class="shop-name">${s.name}</div>
-        <div class="shop-type">${s.type || '商家'}</div>
-        <div class="shop-score">AI 友善度 ${s.score}/100</div>
+        <div class="shop-type">${s.type || 'Business'}</div>
+        <div class="shop-score">AI Score: ${s.score}/100</div>
       </div>
     `).join('');
   } catch {}
 }
 
-// Enter 鍵觸發掃描
 document.getElementById('urlInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') startScan();
 });
 
-// 載入目錄
 loadDirectory();
 </script>
 
