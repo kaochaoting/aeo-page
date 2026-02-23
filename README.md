@@ -1,12 +1,12 @@
 <p align="center">
-  <strong style="font-size: 2rem;">AEO.page</strong><br>
-  <em>Agent Engine Optimization — 讓 AI 找到你的店</em>
+  <h1 align="center">AEO.page</h1>
+  <p align="center"><strong>Agent Engine Optimization — Get found by AI.</strong></p>
 </p>
 
 <p align="center">
-  <a href="https://api.washinmura.jp/aeo">線上體驗</a> ·
-  <a href="#快速開始">快速開始</a> ·
-  <a href="#為什麼需要-aeo">為什麼需要 AEO</a> ·
+  <a href="https://api.washinmura.jp/aeo">Live Demo</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#why-aeo">Why AEO</a> ·
   <a href="#api">API</a>
 </p>
 
@@ -19,83 +19,92 @@
 
 ---
 
-## 一句話
+## TL;DR
 
-> **貼上網址 → AI 幫你診斷 → 一鍵生成修復代碼 → 你的店從此被 AI 找到。**
+> **Paste a URL → AI diagnoses the issues → one-click fix → your business gets found by AI.**
 
-ChatGPT、Claude、Perplexity 在回答「推薦一家千葉的民宿」時，會不會提到你的店？
+When someone asks ChatGPT *"recommend a ryokan in Chiba"*, does it mention your place?
 
-如果不會，問題不在你的服務不好，而是 **AI 根本讀不到你的資料**。
+If not, the problem isn't your service — it's that **AI can't read your data**.
 
-AEO.page 解決這個問題。
+AEO.page fixes that.
 
 ---
 
-## 為什麼需要 AEO
+## Why AEO
 
-| | SEO（舊時代） | AEO（AI 時代） |
+| | SEO (old era) | AEO (AI era) |
 |---|---|---|
-| 對象 | Google 搜尋引擎 | ChatGPT / Claude / Perplexity |
-| 核心 | 排名 | 被引用 |
-| 關鍵技術 | meta tags, backlinks | JSON-LD, llms.txt, FAQ Schema |
-| 受益者 | 有 SEO 預算的大網站 | 每一間小店 |
+| Target | Google search engine | ChatGPT / Claude / Perplexity |
+| Goal | Rank higher | Get cited |
+| Key tech | meta tags, backlinks | JSON-LD, llms.txt, FAQ Schema |
+| Who benefits | Big sites with SEO budgets | Every small business |
 
-**SEO 讓 Google 找到你。AEO 讓 AI 推薦你。**
+**SEO gets Google to find you. AEO gets AI to recommend you.**
 
-2026 年，越來越多人不再「搜尋」，而是直接「問 AI」。
-如果 AI 不認識你的店，你就從這些人的世界裡消失了。
-
----
-
-## 功能
-
-### 掃描引擎
-
-貼上任何網址，AEO Scanner 會：
-
-1. **抓取** 網頁內容（支援 Shift_JIS / EUC-JP 等日文編碼）
-2. **Regex 計分** — 檢測 JSON-LD、llms.txt、OG Tags、FAQ Schema 等 8 項指標
-3. **AI 深度分析** — 用 Claude Sonnet 提取商家名稱、特色、故事、FAQ（可選）
-4. **生成修復代碼** — 一鍵複製 JSON-LD + OG Tags + FAQ Schema
-5. **託管 llms.txt** — 免費幫你託管，AI Agent 可以直接讀取
-
-### 評分標準（滿分 100）
-
-| 項目 | 分數 | 說明 |
-|------|------|------|
-| JSON-LD 結構化數據 | 30 | AI 讀取商家資訊的主要管道 |
-| llms.txt | 20 | AI Agent 專用的商家說明書 |
-| Open Graph | 15 | LINE / Facebook 分享時的圖文 |
-| Meta Description | 10 | 搜尋引擎和 AI 的第一印象 |
-| FAQ Schema | 10 | AI 引用你的問答 |
-| 網頁標題 | 5 | 最基本的識別 |
-| 聯絡資訊 | 5 | 電話和地址 |
-| 圖片 | 5 | 視覺素材 |
+In 2026, more people skip "searching" and just "ask AI" directly. If AI doesn't know your business, you disappear from their world.
 
 ---
 
-## 快速開始
+## Features
 
-### 線上使用（最簡單）
+### Scanner Engine
 
-直接打開 [https://api.washinmura.jp/aeo](https://api.washinmura.jp/aeo)，貼上網址，完成。
+Paste any URL, and the AEO Scanner will:
 
-### 自架部署
+1. **Fetch** the page (supports Shift_JIS / EUC-JP encoding for Japanese sites)
+2. **Regex scoring** — checks JSON-LD, llms.txt, OG Tags, FAQ Schema, and 8 indicators total
+3. **AI deep analysis** — uses Claude Sonnet to extract business name, features, story, FAQ (optional)
+4. **Generate fix code** — one-click copy of JSON-LD + OG Tags + FAQ Schema
+5. **Host llms.txt** — free hosting so AI Agents can read your business info directly
+
+### Scoring Criteria (out of 100)
+
+| Item | Points | Why it matters |
+|------|--------|----------------|
+| JSON-LD structured data | 30 | Primary channel for AI to read business info |
+| llms.txt | 20 | AI Agent's instruction manual for your business |
+| Open Graph tags | 15 | Rich previews when shared on LINE / Facebook |
+| Meta Description | 10 | First impression for search engines and AI |
+| FAQ Schema | 10 | AI can quote your Q&A directly |
+| Page title | 5 | Most basic identification |
+| Contact info | 5 | Phone number and address |
+| Images | 5 | Visual content |
+
+---
+
+## Quick Start
+
+### Use Online (easiest)
+
+Open [https://api.washinmura.jp/aeo](https://api.washinmura.jp/aeo), paste a URL, done.
+
+### Self-Host
 
 ```bash
 # 1. Clone
 git clone https://github.com/sstklen/aeo-page.git
 cd aeo-page
 
-# 2. 安裝
+# 2. Install
 bun install
 
-# 3. 設定（可選：AI 分析需要 Anthropic API Key）
-export ANTHROPIC_API_KEY=sk-ant-xxx   # 沒有也能跑，只是降級為 regex 模式
+# 3. Configure (optional: AI analysis requires Anthropic API Key)
+export ANTHROPIC_API_KEY=sk-ant-xxx   # Works without it, just falls back to regex mode
 
-# 4. 啟動
+# 4. Start
 bun run dev
 # → http://localhost:3000/aeo
+```
+
+### CLI
+
+```bash
+# Scan a single URL from the command line
+bun run src/cli.ts https://example.com
+
+# With AI analysis
+ANTHROPIC_API_KEY=sk-ant-xxx bun run src/cli.ts https://example.com
 ```
 
 ### Docker
@@ -111,7 +120,7 @@ docker run -p 3000:3000 -e ANTHROPIC_API_KEY=sk-ant-xxx aeo-page
 
 ### POST `/api/aeo/scan`
 
-掃描一個網站，回傳 AI 友善度評分和修復建議。
+Scan a website and return its AI-friendliness score with fix suggestions.
 
 ```bash
 curl -X POST https://api.washinmura.jp/api/aeo/scan \
@@ -119,7 +128,7 @@ curl -X POST https://api.washinmura.jp/api/aeo/scan \
   -d '{"url": "https://example.com"}'
 ```
 
-**回應：**
+**Response:**
 
 ```json
 {
@@ -129,8 +138,8 @@ curl -X POST https://api.washinmura.jp/api/aeo/scan \
   "businessType": "LocalBusiness",
   "aiAnalyzed": true,
   "issues": [
-    { "title": "JSON-LD 結構化數據", "status": "fail", "detail": "AI 和 Google 讀不到你的店家資訊" },
-    { "title": "llms.txt", "status": "fail", "detail": "ChatGPT、Claude、Perplexity 找不到你的詳細資料" }
+    { "title": "JSON-LD", "status": "fail", "detail": "AI and Google can't read your business info" },
+    { "title": "llms.txt", "status": "fail", "detail": "ChatGPT, Claude, Perplexity can't find your details" }
   ],
   "hostedUrl": "https://api.washinmura.jp/aeo/shops/example-com/llms.txt",
   "jsonld": "<script type=\"application/ld+json\">...</script>",
@@ -141,126 +150,135 @@ curl -X POST https://api.washinmura.jp/api/aeo/scan \
 
 ### GET `/api/aeo/directory`
 
-取得所有已掃描店家的清單。
+List all scanned businesses.
 
 ### GET `/aeo/shops/:shopId/llms.txt`
 
-取得某個店家的 llms.txt（純文字）。
+Get a business's hosted llms.txt (plain text).
 
 ---
 
-## 架構
+## Architecture
 
 ```
 aeo-page/
 ├── src/
-│   ├── aeo-scanner.ts    # 掃描引擎（Regex + AI 雙模式）
-│   ├── aeo-routes.ts     # Hono API 路由
-│   └── server.ts         # HTTP 伺服器
+│   ├── aeo-scanner.ts    # Scan engine (Regex + AI dual mode)
+│   ├── aeo-routes.ts     # Hono API routes
+│   ├── cli.ts            # CLI scanner tool
+│   └── server.ts         # HTTP server
 ├── public/
-│   └── aeo.html          # 前端單頁應用
-├── data/aeo/             # 掃描結果儲存（自動產生）
+│   └── aeo.html          # Frontend SPA (zero dependencies)
+├── data/aeo/             # Scan results (auto-generated)
 │   ├── directory.json
 │   └── shops/
 │       └── {shopId}/
 │           ├── llms.txt
 │           └── data.json
+├── Dockerfile
 ├── package.json
 └── tsconfig.json
 ```
 
-### 技術選型
+### Tech Stack
 
-| 元件 | 技術 | 為什麼 |
-|------|------|--------|
-| Runtime | Bun | 快、內建 TypeScript |
-| HTTP | Hono | 輕量、快、邊緣友善 |
-| AI | Claude Sonnet | 日文理解力最強 |
-| 前端 | 原生 HTML/JS | 零依賴、一個檔案搞定 |
-| 儲存 | JSON 檔案 | 簡單，不需要資料庫 |
+| Component | Tech | Why |
+|-----------|------|-----|
+| Runtime | Bun | Fast, built-in TypeScript |
+| HTTP | Hono | Lightweight, fast, edge-ready |
+| AI | Claude Sonnet | Best Japanese language understanding |
+| Frontend | Vanilla HTML/JS | Zero deps, single file |
+| Storage | JSON files | Simple, no database needed |
 
 ---
 
-## 掃描範例
+## Scan Example
 
-### 和心村（washinmura.jp）— 100 分
+### Washin Village (washinmura.jp) — Score: 100/100
 
-```
+```markdown
 # 和心村（Washin Village / わしんむら）
 
 > 千葉県富津市の里山に佇む、築200年の古民家を中心とした体験型宿泊施設。
 > A 200-year-old farmhouse retreat with 16 rescue cats, sauna, and glamping.
 
 - URL: https://washinmura.jp
-- 住所: 〒299-1607 千葉県富津市高溝14
+- Address: 〒299-1607 千葉県富津市高溝14
 - TEL: 080-6570-7474
 
-## 特徴
-- 築200年の古民家での宿泊体験
-- 16匹の保護猫との触れ合い
-- 本格薪サウナ（フィンランド式）
-- 隈研吾×Snow Peak「住箱」でのグランピング
-- 東京から車でわずか70分の好アクセス
+## Features
+- Stay in a 200-year-old traditional Japanese farmhouse
+- Interact with 16 rescue cats
+- Authentic Finnish wood-fired sauna
+- Kengo Kuma × Snow Peak "Jyubako" glamping units
+- Just 70 min from Tokyo by car
 ```
 
 ---
 
-## 什麼是 llms.txt？
+## What is llms.txt?
 
-[llms.txt](https://llmstxt.org/) 是一個新興標準，讓 AI Agent 能快速理解一個網站。
+[llms.txt](https://llmstxt.org/) is an emerging standard that helps AI Agents quickly understand a website.
 
-就像 `robots.txt` 告訴搜尋引擎「哪些頁面可以爬」，
-`llms.txt` 告訴 AI「這個網站是做什麼的」。
+Just like `robots.txt` tells search engines *"which pages to crawl"*,
+`llms.txt` tells AI *"what this website is about"*.
 
-AEO.page 幫每個掃描過的網站自動生成並託管 llms.txt。
+AEO.page auto-generates and hosts llms.txt for every scanned website.
 
 ---
 
+## Roadmap
+
+- [x] Core scan engine (Regex mode)
+- [x] AI deep analysis (Claude Sonnet)
+- [x] llms.txt auto-hosting
+- [x] Web frontend
+- [x] Japanese encoding support (Shift_JIS / EUC-JP)
+- [ ] Batch scan API
+- [ ] Scheduled re-scans (monitor score changes)
+- [ ] MCP Server (let AI Agents call the scanner directly)
+- [ ] Multi-language frontend (日本語 / 中文)
+- [ ] Chrome extension
+
+---
+
+## Contributing
+
+PRs welcome! Especially:
+
+- New scoring items (e.g. robots.txt check, sitemap detection)
+- Website parsing improvements for non-Japanese sites
+- Frontend UI improvements
+- Translations
+
+---
+
+## 中文
+
+> AEO.page 幫你檢測網站的「AI 友善度」。貼上網址，自動診斷 JSON-LD、llms.txt、FAQ Schema，
+> 一鍵生成修復代碼。免費。
+>
+> **SEO 是給 Google 的。AEO 是給 AI 的。**
+
 ## 日本語
 
-> AEO.page は、あなたのウェブサイトが AI（ChatGPT、Claude、Perplexity など）に
+> AEO.page は、あなたのウェブサイトが AI（ChatGPT、Claude、Perplexity 等）に
 > 発見されやすいかを診断するツールです。
 >
 > URL を入力するだけで、JSON-LD、llms.txt、FAQ Schema を自動生成します。
 > すべて無料です。
 >
-> **SEO はGoogleのため。AEO は AI のため。**
+> **SEO は Google のため。AEO は AI のため。**
 
 ---
 
-## 路線圖
+## License
 
-- [x] 基本掃描引擎（Regex 模式）
-- [x] AI 深度分析（Claude Sonnet）
-- [x] llms.txt 自動託管
-- [x] 前端介面
-- [x] 日文網站編碼支援（Shift_JIS / EUC-JP）
-- [ ] 批量掃描 API
-- [ ] 定期重新掃描（監控分數變化）
-- [ ] MCP Server（讓 AI Agent 直接呼叫掃描）
-- [ ] 多語言前端（日本語 / English）
-- [ ] Chrome 擴充功能
-
----
-
-## 貢獻
-
-歡迎 PR！尤其歡迎：
-
-- 新的評分項目（例如：robots.txt 檢測、sitemap 檢測）
-- 其他語言的網站解析優化
-- 前端 UI 改進
-- 文件翻譯
-
----
-
-## 授權
-
-MIT License — 自由使用，商用也行。
+MIT — free for personal and commercial use.
 
 ---
 
 <p align="center">
-  由 <a href="https://washinmura.jp">和心村</a> 製作 🐾<br>
-  <em>千葉縣房總半島的動物庇護所，28 隻貓狗的家</em>
+  Built by <a href="https://washinmura.jp">Washin Village</a> 🐾<br>
+  <em>An animal sanctuary on the Boso Peninsula, Japan — home to 28 cats & dogs</em>
 </p>
