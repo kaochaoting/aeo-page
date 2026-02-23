@@ -4,161 +4,151 @@
 </p>
 
 <p align="center">
-  <a href="https://api.washinmura.jp/aeo">Live Demo</a> ·
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="#why-aeo">Why AEO</a> ·
-  <a href="#api">API</a>
+  <img src="https://img.shields.io/badge/Free-Online_Scanner-green?style=for-the-badge" alt="Free"/>
+  <img src="https://img.shields.io/badge/Checks-8_Indicators-blue?style=for-the-badge" alt="8 Indicators"/>
+  <img src="https://img.shields.io/badge/Fixes-One_Click-orange?style=for-the-badge" alt="One Click Fix"/>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License">
-  <img src="https://img.shields.io/badge/runtime-Bun-black" alt="Bun">
-  <img src="https://img.shields.io/badge/AI-Claude%20Sonnet-orange" alt="Claude">
-  <img src="https://img.shields.io/badge/lang-TypeScript-blue" alt="TypeScript">
+  <a href="https://github.com/sstklen/aeo-page/stargazers"><img src="https://img.shields.io/github/stars/sstklen/aeo-page?style=social" alt="Stars"/></a>
+  &nbsp;
+  <a href="https://api.washinmura.jp/aeo"><strong>Try It Now (free) →</strong></a>
 </p>
 
 ---
 
-## TL;DR
+## The Problem
 
-> **Paste a URL → AI diagnoses the issues → one-click fix → your business gets found by AI.**
+You ask ChatGPT: *"Recommend a ryokan in Chiba"*
 
-When someone asks ChatGPT *"recommend a ryokan in Chiba"*, does it mention your place?
+Your ryokan has 5-star reviews. 200 years of history. Beautiful photos.
 
-If not, the problem isn't your service — it's that **AI can't read your data**.
+**ChatGPT doesn't mention it.** It recommends your competitor instead.
 
-AEO.page fixes that.
+The problem isn't your service. It's that **AI can't read your website data.**
+
+Most small business websites score **15-35 out of 100** on AI readability.
+
+## The Fix
+
+Paste your URL into AEO.page → See your score → Copy the fix code → Paste it into your site.
+
+```
+Before:  Score 25/100 — AI can't find you
+After:   Score 85/100 — AI recommends you
+Time:    5 minutes
+Cost:    Free
+```
 
 ---
 
-## Why AEO
+## Why AEO Matters in 2026
 
-| | SEO (old era) | AEO (AI era) |
+| | SEO (Google era) | AEO (AI era) |
 |---|---|---|
-| Target | Google search engine | ChatGPT / Claude / Perplexity |
-| Goal | Rank higher | Get cited |
-| Key tech | meta tags, backlinks | JSON-LD, llms.txt, FAQ Schema |
-| Who benefits | Big sites with SEO budgets | Every small business |
+| **Target** | Google search engine | ChatGPT / Claude / Perplexity |
+| **Goal** | Rank higher in results | Get cited in AI answers |
+| **Key tech** | Meta tags, backlinks | JSON-LD, llms.txt, FAQ Schema |
+| **Who wins** | Big sites with SEO budgets | Any business that adds structured data |
 
-**SEO gets Google to find you. AEO gets AI to recommend you.**
-
-In 2026, more people skip "searching" and just "ask AI" directly. If AI doesn't know your business, you disappear from their world.
+> **SEO gets Google to find you. AEO gets AI to recommend you.**
+>
+> In 2026, more people skip "searching" and just ask AI. If AI doesn't know your business, you disappear from their world.
 
 ---
 
-## Features
+## How It Works
 
-### Scanner Engine
+Paste any URL. AEO.page scans 8 indicators:
 
-Paste any URL, and the AEO Scanner will:
+| Indicator | Points | What AI looks for |
+|-----------|--------|-------------------|
+| **JSON-LD** | 30 | Structured business data (name, type, address) |
+| **llms.txt** | 20 | AI Agent's instruction manual for your site |
+| **Open Graph** | 15 | Rich previews on LINE / Facebook / Slack |
+| **Meta Description** | 10 | First impression for AI and search |
+| **FAQ Schema** | 10 | Q&A that AI can quote directly |
+| **Page Title** | 5 | Basic identification |
+| **Contact Info** | 5 | Phone and address for local results |
+| **Images** | 5 | Visual content signals |
 
-1. **Fetch** the page (supports Shift_JIS / EUC-JP encoding for Japanese sites)
-2. **Regex scoring** — checks JSON-LD, llms.txt, OG Tags, FAQ Schema, and 8 indicators total
-3. **AI deep analysis** — uses Claude Sonnet to extract business name, features, story, FAQ (optional)
-4. **Generate fix code** — one-click copy of JSON-LD + OG Tags + FAQ Schema
-5. **Host llms.txt** — free hosting so AI Agents can read your business info directly
-
-### Scoring Criteria (out of 100)
-
-| Item | Points | Why it matters |
-|------|--------|----------------|
-| JSON-LD structured data | 30 | Primary channel for AI to read business info |
-| llms.txt | 20 | AI Agent's instruction manual for your business |
-| Open Graph tags | 15 | Rich previews when shared on LINE / Facebook |
-| Meta Description | 10 | First impression for search engines and AI |
-| FAQ Schema | 10 | AI can quote your Q&A directly |
-| Page title | 5 | Most basic identification |
-| Contact info | 5 | Phone number and address |
-| Images | 5 | Visual content |
+Then it **generates the fix code** — JSON-LD, OG Tags, FAQ Schema — ready to copy-paste.
 
 ---
 
 ## Quick Start
 
-### Use Online (easiest)
+### Online (easiest — no install)
 
-Open [https://api.washinmura.jp/aeo](https://api.washinmura.jp/aeo), paste a URL, done.
+1. Open **[aeo.washinmura.jp](https://api.washinmura.jp/aeo)**
+2. Paste a URL
+3. See your score + copy the fix code
+
+### API
+
+```bash
+curl -X POST https://api.washinmura.jp/api/aeo/scan \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://your-site.com"}'
+```
+
+Returns score, issues, and generated fix code (JSON-LD + OG + FAQ Schema).
 
 ### Self-Host
 
 ```bash
-# 1. Clone
-git clone https://github.com/sstklen/aeo-page.git
-cd aeo-page
-
-# 2. Install
+git clone https://github.com/sstklen/aeo-page.git && cd aeo-page
 bun install
-
-# 3. Configure (optional: AI analysis requires Anthropic API Key)
-export ANTHROPIC_API_KEY=sk-ant-xxx   # Works without it, just falls back to regex mode
-
-# 4. Start
 bun run dev
 # → http://localhost:3000/aeo
+# Optional: export ANTHROPIC_API_KEY=sk-ant-xxx for AI deep analysis
 ```
 
-### CLI
+<details>
+<summary><b>Docker / CLI options</b></summary>
 
-```bash
-# Scan a single URL from the command line
-bun run src/cli.ts https://example.com
-
-# With AI analysis
-ANTHROPIC_API_KEY=sk-ant-xxx bun run src/cli.ts https://example.com
-```
-
-### Docker
-
+**Docker:**
 ```bash
 docker build -t aeo-page .
 docker run -p 3000:3000 -e ANTHROPIC_API_KEY=sk-ant-xxx aeo-page
 ```
 
----
-
-## API
-
-### POST `/api/aeo/scan`
-
-Scan a website and return its AI-friendliness score with fix suggestions.
-
+**CLI:**
 ```bash
-curl -X POST https://api.washinmura.jp/api/aeo/scan \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
+bun run src/cli.ts https://example.com
 ```
 
-**Response:**
-
-```json
-{
-  "url": "https://example.com",
-  "score": 35,
-  "businessName": "Example Shop",
-  "businessType": "LocalBusiness",
-  "aiAnalyzed": true,
-  "issues": [
-    { "title": "JSON-LD", "status": "fail", "detail": "AI and Google can't read your business info" },
-    { "title": "llms.txt", "status": "fail", "detail": "ChatGPT, Claude, Perplexity can't find your details" }
-  ],
-  "hostedUrl": "https://api.washinmura.jp/aeo/shops/example-com/llms.txt",
-  "jsonld": "<script type=\"application/ld+json\">...</script>",
-  "ogTags": "<!-- Open Graph -->...",
-  "faqSchema": "<script type=\"application/ld+json\">..."
-}
-```
-
-### GET `/api/aeo/directory`
-
-List all scanned businesses.
-
-### GET `/aeo/shops/:shopId/llms.txt`
-
-Get a business's hosted llms.txt (plain text).
+</details>
 
 ---
 
-## Architecture
+## What is llms.txt?
+
+Like `robots.txt` tells search engines *which pages to crawl*,
+**`llms.txt`** tells AI *what your website is about*.
+
+It's an [emerging standard](https://llmstxt.org/) for making websites AI-readable.
+
+AEO.page auto-generates and **hosts** llms.txt for every scanned site — for free.
+
+---
+
+## Roadmap
+
+- [x] Scan engine (Regex + AI dual mode)
+- [x] llms.txt auto-generation and hosting
+- [x] Japanese encoding support (Shift_JIS / EUC-JP)
+- [x] Web frontend + API
+- [ ] Batch scan API
+- [ ] Scheduled re-scans (monitor score over time)
+- [ ] MCP Server (let AI Agents call the scanner)
+- [ ] Chrome extension
+- [ ] Multi-language frontend
+
+---
+
+<details>
+<summary><b>🔧 Architecture & Tech Stack</b></summary>
 
 ```
 aeo-page/
@@ -169,116 +159,56 @@ aeo-page/
 │   └── server.ts         # HTTP server
 ├── public/
 │   └── aeo.html          # Frontend SPA (zero dependencies)
-├── data/aeo/             # Scan results (auto-generated)
-│   ├── directory.json
-│   └── shops/
-│       └── {shopId}/
-│           ├── llms.txt
-│           └── data.json
-├── Dockerfile
-├── package.json
-└── tsconfig.json
+└── data/aeo/             # Scan results (auto-generated)
 ```
-
-### Tech Stack
 
 | Component | Tech | Why |
 |-----------|------|-----|
 | Runtime | Bun | Fast, built-in TypeScript |
-| HTTP | Hono | Lightweight, fast, edge-ready |
-| AI | Claude Sonnet | Best Japanese language understanding |
+| HTTP | Hono | Lightweight, edge-ready |
+| AI | Claude Sonnet | Best Japanese understanding |
 | Frontend | Vanilla HTML/JS | Zero deps, single file |
-| Storage | JSON files | Simple, no database needed |
 
----
+</details>
 
-## Scan Example
+<details>
+<summary><b>📡 Full API Reference</b></summary>
 
-### Washin Village (washinmura.jp) — Score: 100/100
+### POST `/api/aeo/scan`
 
-```markdown
-# 和心村（Washin Village / わしんむら）
-
-> 千葉県富津市の里山に佇む、築200年の古民家を中心とした体験型宿泊施設。
-> A 200-year-old farmhouse retreat with 16 rescue cats, sauna, and glamping.
-
-- URL: https://washinmura.jp
-- Address: 〒299-1607 千葉県富津市高溝14
-- TEL: 080-6570-7474
-
-## Features
-- Stay in a 200-year-old traditional Japanese farmhouse
-- Interact with 16 rescue cats
-- Authentic Finnish wood-fired sauna
-- Kengo Kuma × Snow Peak "Jyubako" glamping units
-- Just 70 min from Tokyo by car
+```json
+// Response
+{
+  "url": "https://example.com",
+  "score": 35,
+  "businessName": "Example Shop",
+  "issues": [
+    { "title": "JSON-LD", "status": "fail", "detail": "AI can't read your business info" },
+    { "title": "llms.txt", "status": "fail", "detail": "ChatGPT/Claude can't find your details" }
+  ],
+  "hostedUrl": "https://api.washinmura.jp/aeo/shops/example-com/llms.txt",
+  "jsonld": "<script type=\"application/ld+json\">...</script>",
+  "ogTags": "<!-- Open Graph -->...",
+  "faqSchema": "<script type=\"application/ld+json\">..."
+}
 ```
 
----
+### GET `/api/aeo/directory` — List all scanned businesses
 
-## What is llms.txt?
+### GET `/aeo/shops/:shopId/llms.txt` — Get hosted llms.txt
 
-[llms.txt](https://llmstxt.org/) is an emerging standard that helps AI Agents quickly understand a website.
-
-Just like `robots.txt` tells search engines *"which pages to crawl"*,
-`llms.txt` tells AI *"what this website is about"*.
-
-AEO.page auto-generates and hosts llms.txt for every scanned website.
-
----
-
-## Roadmap
-
-- [x] Core scan engine (Regex mode)
-- [x] AI deep analysis (Claude Sonnet)
-- [x] llms.txt auto-hosting
-- [x] Web frontend
-- [x] Japanese encoding support (Shift_JIS / EUC-JP)
-- [ ] Batch scan API
-- [ ] Scheduled re-scans (monitor score changes)
-- [ ] MCP Server (let AI Agents call the scanner directly)
-- [ ] Multi-language frontend (日本語 / 中文)
-- [ ] Chrome extension
+</details>
 
 ---
 
 ## Contributing
 
-PRs welcome! Especially:
-
-- New scoring items (e.g. robots.txt check, sitemap detection)
-- Website parsing improvements for non-Japanese sites
-- Frontend UI improvements
-- Translations
-
----
-
-## 中文
-
-> AEO.page 幫你檢測網站的「AI 友善度」。貼上網址，自動診斷 JSON-LD、llms.txt、FAQ Schema，
-> 一鍵生成修復代碼。免費。
->
-> **SEO 是給 Google 的。AEO 是給 AI 的。**
-
-## 日本語
-
-> AEO.page は、あなたのウェブサイトが AI（ChatGPT、Claude、Perplexity 等）に
-> 発見されやすいかを診断するツールです。
->
-> URL を入力するだけで、JSON-LD、llms.txt、FAQ Schema を自動生成します。
-> すべて無料です。
->
-> **SEO は Google のため。AEO は AI のため。**
-
----
-
-## License
-
-MIT — free for personal and commercial use.
+PRs welcome! Especially: new scoring rules, parser improvements for non-Japanese sites, translations.
 
 ---
 
 <p align="center">
-  Built by <a href="https://washinmura.jp">Washin Village</a> 🐾<br>
-  <em>An animal sanctuary on the Boso Peninsula, Japan — home to 28 cats & dogs</em>
+  <sub>
+    <a href="https://washinmura.jp">Washin Village</a> 🐾 — An animal sanctuary in Japan building AI tools.
+  </sub>
 </p>
