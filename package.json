@@ -1,0 +1,38 @@
+{
+  "name": "aeo-page",
+  "version": "1.0.0",
+  "description": "AEO.page — 讓 AI 找到你的店。Agent Engine Optimization scanner & toolkit.",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/server.ts",
+    "start": "bun run src/server.ts",
+    "scan": "bun run src/cli.ts"
+  },
+  "dependencies": {
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.9.0"
+  },
+  "keywords": [
+    "aeo",
+    "seo",
+    "ai",
+    "llms-txt",
+    "json-ld",
+    "chatgpt",
+    "claude",
+    "perplexity",
+    "structured-data",
+    "schema-org",
+    "agent-engine-optimization"
+  ],
+  "author": "Washin Village (和心村)",
+  "license": "MIT",
+  "homepage": "https://api.washinmura.jp/aeo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sstklen/aeo-page.git"
+  }
+}

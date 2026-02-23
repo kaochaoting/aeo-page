@@ -1,0 +1,7 @@
+node_modules/
+dist/
+data/aeo/
+.env
+*.log
+.DS_Store
+bun.lockb
