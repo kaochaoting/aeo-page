@@ -2,10 +2,11 @@ import { access } from 'node:fs/promises';
 
 const required = [
   'public/aeo.html',
+  'public/index.html',
   'functions/api/aeo/scan.ts',
   'functions/api/aeo/directory.ts',
   'functions/aeo/shops/[shopId]/llms.txt.ts',
-  'wrangler.toml',
+  'wrangler.local.toml',
 ];
 
 for (const file of required) {
