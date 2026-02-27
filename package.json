@@ -4,6 +4,7 @@
   "description": "AEO.page — 讓 AI 找到你的店。Agent Engine Optimization scanner & toolkit.",
   "type": "module",
   "scripts": {
+    "build": "node scripts/build.mjs",
     "dev": "bun run --watch src/server.ts",
     "start": "bun run src/server.ts",
     "scan": "bun run src/cli.ts"

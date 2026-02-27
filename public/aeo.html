@@ -426,6 +426,7 @@
       <div class="url" id="resultUrl"></div>
       <div class="score" id="scoreNum">--</div>
       <div class="score-label">AI-Friendliness Score / 100</div>
+      <div id="cacheStatus" style="margin-top:8px;color: var(--text2); font-size:0.85rem;"></div>
     </div>
 
     <!-- Issues -->
@@ -536,8 +537,14 @@ async function startScan() {
       body: JSON.stringify({ url })
     });
 
-    if (!res.ok) throw new Error(`Scan failed (${res.status})`);
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('Retry-After') || '60';
+        throw new Error(`Rate limit exceeded. Please retry after ${retryAfter}s`);
+      }
+      throw new Error(data.error || `Scan failed (${res.status})`);
+    }
     displayResults(url, data);
 
   } catch (err) {
@@ -554,6 +561,7 @@ function displayResults(url, data) {
   const scoreEl = document.getElementById('scoreNum');
   const score = data.score || 0;
   scoreEl.textContent = score;
+  document.getElementById('cacheStatus').textContent = data.cached ? 'Cached result (24h): HIT' : 'Fresh scan: MISS';
   scoreEl.className = 'score ' + (score >= 70 ? 'score-high' : score >= 40 ? 'score-mid' : 'score-low');
 
   const issuesList = document.getElementById('issuesList');

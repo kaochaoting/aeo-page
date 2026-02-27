@@ -4,8 +4,6 @@
  * 無 AI Key 時自動降級為 regex 模式
  */
 
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
 
 // === 型別定義 ===
 
@@ -62,15 +60,6 @@ interface AIAnalysis {
   faq: Array<{ q: string; a: string }>;
 }
 
-// === 儲存目錄 ===
-const DATA_DIR = resolve(import.meta.dir, '../data/aeo');
-const SHOPS_DIR = resolve(DATA_DIR, 'shops');
-
-function ensureDirs() {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-  if (!existsSync(SHOPS_DIR)) mkdirSync(SHOPS_DIR, { recursive: true });
-}
-
 // === 取得 Anthropic API Key ===
 
 async function getAnthropicKey(): Promise<string | null> {
@@ -83,8 +72,6 @@ async function getAnthropicKey(): Promise<string | null> {
 // === 主掃描函式 ===
 
 export async function scanWebsite(url: string): Promise<ScanResult> {
-  ensureDirs();
-
   // 1. 抓取網頁
   const html = await fetchWebsite(url);
 
@@ -103,11 +90,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
   // 6. 生成結構化數據（AI 結果 + regex 結果混合）
   const generated = generateStructuredData(url, info, businessType, aiResult);
 
-  // 7. 儲存 llms.txt
-  const shopId = urlToShopId(url);
-  const hostedUrl = saveLlmsTxt(shopId, generated.llmsTxt);
-
-  // 8. 組裝結果
+  // 7. 組裝結果（儲存交由 runtime：Cloudflare KV / app DB）
   const businessName = aiResult?.name || info.title || new URL(url).hostname;
   const result: ScanResult = {
     url,
@@ -115,7 +98,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
     businessName,
     businessType,
     issues,
-    hostedUrl,
+    hostedUrl: null,
     jsonld: generated.jsonld,
     ogTags: generated.ogTags,
     faqSchema: generated.faqSchema,
@@ -123,9 +106,6 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
     scannedAt: new Date().toISOString(),
     aiAnalyzed: !!aiResult,
   };
-
-  saveShopData(shopId, result);
-
   return result;
 }
 
@@ -613,65 +593,8 @@ ${faqEntries.map(f => `    {
 
 // === 儲存與讀取 ===
 
-function urlToShopId(url: string): string {
+export function urlToShopId(url: string): string {
   return new URL(url).hostname.replace(/\./g, '-').replace(/^www-/, '');
-}
-
-function saveLlmsTxt(shopId: string, content: string): string {
-  ensureDirs();
-  const shopDir = resolve(SHOPS_DIR, shopId);
-  if (!existsSync(shopDir)) mkdirSync(shopDir, { recursive: true });
-  writeFileSync(resolve(shopDir, 'llms.txt'), content, 'utf-8');
-  return `/aeo/shops/${shopId}/llms.txt`;
-}
-
-function saveShopData(shopId: string, data: ScanResult) {
-  ensureDirs();
-  const shopDir = resolve(SHOPS_DIR, shopId);
-  if (!existsSync(shopDir)) mkdirSync(shopDir, { recursive: true });
-  writeFileSync(resolve(shopDir, 'data.json'), JSON.stringify(data, null, 2), 'utf-8');
-  updateDirectory(shopId, data);
-}
-
-function updateDirectory(shopId: string, data: ScanResult) {
-  const indexPath = resolve(DATA_DIR, 'directory.json');
-  let directory: any[] = [];
-  if (existsSync(indexPath)) {
-    try { directory = JSON.parse(readFileSync(indexPath, 'utf-8')); } catch {}
-  }
-
-  const existing = directory.findIndex(s => s.id === shopId);
-  const entry = {
-    id: shopId,
-    name: data.businessName,
-    type: data.businessType,
-    url: data.url,
-    score: data.score,
-    aiAnalyzed: data.aiAnalyzed,
-    scannedAt: data.scannedAt,
-  };
-
-  if (existing >= 0) {
-    directory[existing] = entry;
-  } else {
-    directory.push(entry);
-  }
-
-  writeFileSync(indexPath, JSON.stringify(directory, null, 2), 'utf-8');
-}
-
-// === 讀取目錄 ===
-
-export function getDirectory(): any[] {
-  const indexPath = resolve(DATA_DIR, 'directory.json');
-  if (!existsSync(indexPath)) return [];
-  try { return JSON.parse(readFileSync(indexPath, 'utf-8')); } catch { return []; }
-}
-
-export function getShopLlmsTxt(shopId: string): string | null {
-  const filePath = resolve(SHOPS_DIR, shopId, 'llms.txt');
-  if (!existsSync(filePath)) return null;
-  return readFileSync(filePath, 'utf-8');
 }
 
 // === 工具 ===
