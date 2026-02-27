@@ -1,6 +1,7 @@
 import { scanWebsite, urlToShopId, type ScanResult } from '../../../src/aeo-scanner';
 import type { DirectoryEntry, Env } from '../../_lib/types';
-import { CACHE_TTL_SECONDS, RATE_LIMIT_WINDOW_SECONDS, ipFromHeaders, minuteBucket, normalizeUrl } from '../../_lib/kv-utils';
+import { CACHE_TTL_SECONDS, ipFromHeaders, normalizeUrl } from '../../_lib/kv-utils';
+export { RateLimiterDO } from '../../_lib/rate-limiter-do';
 
 async function json(request: Request): Promise<any> {
   try {
@@ -15,24 +16,40 @@ function parseRateLimit(env: Env): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 30;
 }
 
+async function enforceRateLimit(env: Env, ip: string, limit: number): Promise<{ allowed: boolean; retryAfter: number }> {
+  const id = env.AEO_RATE_LIMITER.idFromName(ip);
+  const stub = env.AEO_RATE_LIMITER.get(id);
+  const response = await stub.fetch('https://rate-limiter/check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ip, limit }),
+  });
+
+  if (!response.ok) {
+    return { allowed: true, retryAfter: 0 };
+  }
+
+  const result = await response.json() as { allowed: boolean; retryAfter?: number };
+  return {
+    allowed: !!result.allowed,
+    retryAfter: Number(result.retryAfter || 60),
+  };
+}
+
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const rateLimit = parseRateLimit(env);
   const ip = ipFromHeaders(request);
-  const bucket = minuteBucket();
-  const rlKey = `AEO_RL:${ip}:${bucket}`;
+  const rl = await enforceRateLimit(env, ip, rateLimit);
 
-  const currentCount = Number.parseInt((await env.AEO_KV.get(rlKey)) || '0', 10);
-  if (currentCount >= rateLimit) {
+  if (!rl.allowed) {
     return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
       status: 429,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Retry-After': String(RATE_LIMIT_WINDOW_SECONDS),
+        'Retry-After': String(rl.retryAfter),
       },
     });
   }
-
-  await env.AEO_KV.put(rlKey, String(currentCount + 1), { expirationTtl: RATE_LIMIT_WINDOW_SECONDS });
 
   const body = await json(request);
   const inputUrl = body?.url?.trim();
@@ -57,12 +74,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     });
   }
 
-  if (env.ANTHROPIC_API_KEY && typeof process !== 'undefined') {
-    (process as any).env = { ...(process as any).env, ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY };
-  }
-
   try {
-    const result = await scanWebsite(normalized);
+    const result = await scanWebsite(normalized, {
+      anthropicApiKey: env.ANTHROPIC_API_KEY,
+    });
     const shopId = urlToShopId(normalized);
     const hostedPath = `/aeo/shops/${shopId}/llms.txt`;
     const hostedUrl = new URL(hostedPath, request.url).toString();

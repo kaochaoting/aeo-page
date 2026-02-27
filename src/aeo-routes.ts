@@ -29,7 +29,7 @@ export function createAeoRoutes() {
         return c.json({ error: '網址格式不正確' }, 400);
       }
 
-      const result = await scanWebsite(validUrl);
+      const result = await scanWebsite(validUrl, { anthropicApiKey: process.env.ANTHROPIC_API_KEY });
       const shopId = urlToShopId(validUrl);
       result.hostedUrl = `${new URL(c.req.url).origin}/aeo/shops/${shopId}/llms.txt`;
 

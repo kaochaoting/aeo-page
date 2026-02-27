@@ -1,6 +1,6 @@
 # Deploy AEO.page to Cloudflare Pages
 
-本文件提供把此專案部署到 Cloudflare Pages（含 Functions + KV）的完整流程。
+本文件提供把此專案部署到 Cloudflare Pages（含 Functions + KV + Durable Object）的完整流程。
 
 ## 1) 專案型態與部署策略
 
@@ -9,7 +9,8 @@
 因此 Cloudflare Pages 採用：
 - 靜態輸出目錄：`public`
 - 後端 API：`/functions/**`（Pages Functions）
-- 資料層：Cloudflare KV（快取 + rate limit + directory + llms.txt）
+- 資料層：Cloudflare KV（快取、directory、llms.txt）
+- Rate limit：Durable Object（原子計數，避免併發穿透）
 
 ## 2) 建立 Cloudflare KV
 
@@ -26,7 +27,25 @@ id = "<PROD_NAMESPACE_ID>"
 preview_id = "<PREVIEW_NAMESPACE_ID>"
 ```
 
-## 3) Pages 專案設定
+## 3) 建立 Durable Object（Rate Limiter）
+
+本專案使用 `RateLimiterDO` 做每 IP 每分鐘計數。
+
+`wrangler.toml` 需包含：
+
+```toml
+[[durable_objects.bindings]]
+name = "AEO_RATE_LIMITER"
+class_name = "RateLimiterDO"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiterDO"]
+```
+
+> 若你已部署過舊版本，後續變更 DO class 時請新增 migration tag（例如 `v2`）以避免部署失敗。
+
+## 4) Pages 專案設定
 
 在 Cloudflare Dashboard 建立 Pages 專案並連到本 repo。
 
@@ -35,19 +54,25 @@ preview_id = "<PREVIEW_NAMESPACE_ID>"
 - **Build output directory**: `public`
 - **Root directory**: `/`（留空也可）
 
-## 4) 設定環境變數（Pages > Settings > Environment variables）
+## 5) 設定環境變數（Pages > Settings > Environment variables）
 
 必填/建議：
 - `AEO_RATE_LIMIT_PER_MINUTE=30`（可調）
 - `ANTHROPIC_API_KEY=<optional>`（可不填，不填會走 regex 模式）
 
-## 5) 綁定 KV 到 Pages
+## 6) 綁定 KV / DO 到 Pages
 
-在 Pages 專案的 **Settings > Functions > KV namespace bindings**：
-- Variable name: `AEO_KV`
-- Namespace: 對應到 production / preview 的 namespace
+在 Pages 專案的 **Settings > Functions**：
 
-## 6) 自訂網域
+- **KV namespace bindings**
+  - Variable name: `AEO_KV`
+  - Namespace: 對應到 production / preview 的 namespace
+
+- **Durable Object bindings**
+  - Variable name: `AEO_RATE_LIMITER`
+  - Class name: `RateLimiterDO`
+
+## 7) 自訂網域
 
 ### 優先：子網域
 - 新增 Custom domain：`aeo.kairossite.com`
@@ -57,7 +82,7 @@ preview_id = "<PREVIEW_NAMESPACE_ID>"
 - 可用 `kairossite.com/aeo`，需搭配站點路由規則或反向代理到 Pages。
 - 本專案已支援 `/aeo` 入口（轉址到 `/aeo.html`）。
 
-## 7) 本機驗證（Bun 等價 + Wrangler 可選）
+## 8) 本機驗證（Bun 等價 + Wrangler 可選）
 
 ```bash
 npm install
@@ -69,7 +94,7 @@ npm run dev
 
 若你本機可安裝 wrangler，建議額外執行：
 ```bash
-npx wrangler pages dev public --kv AEO_KV
+npx wrangler pages dev public --kv AEO_KV --do AEO_RATE_LIMITER=RateLimiterDO
 ```
 
 測試 API：
@@ -87,7 +112,7 @@ curl -i -X POST http://127.0.0.1:8788/api/aeo/scan \
 - HTTP `429`
 - `Retry-After` header
 
-## 8) 目前 Functions 路徑
+## 9) 目前 Functions 路徑
 
 - `POST /api/aeo/scan`
 - `GET /api/aeo/directory`

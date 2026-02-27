@@ -27,7 +27,7 @@ if (!url) {
 console.log(`\n掃描中: ${url}\n`);
 
 try {
-  const result = await scanWebsite(url.startsWith('http') ? url : `https://${url}`);
+  const result = await scanWebsite(url.startsWith('http') ? url : `https://${url}`, { anthropicApiKey: process.env.ANTHROPIC_API_KEY });
 
   // 顯示分數
   const scoreColor = result.score >= 70 ? '\x1b[32m' : result.score >= 40 ? '\x1b[33m' : '\x1b[31m';

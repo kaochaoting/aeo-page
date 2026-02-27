@@ -60,18 +60,14 @@ interface AIAnalysis {
   faq: Array<{ q: string; a: string }>;
 }
 
-// === 取得 Anthropic API Key ===
 
-async function getAnthropicKey(): Promise<string | null> {
-  if (process.env.ANTHROPIC_API_KEY) {
-    return process.env.ANTHROPIC_API_KEY;
-  }
-  return null;
+interface ScanOptions {
+  anthropicApiKey?: string | null;
 }
 
 // === 主掃描函式 ===
 
-export async function scanWebsite(url: string): Promise<ScanResult> {
+export async function scanWebsite(url: string, options: ScanOptions = {}): Promise<ScanResult> {
   // 1. 抓取網頁
   const html = await fetchWebsite(url);
 
@@ -82,7 +78,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
   const { score, issues } = analyzeScore(info);
 
   // 4. 嘗試 AI 分析（用於產出高品質內容）
-  const aiResult = await analyzeWithAI(info.textContent, url, info);
+  const aiResult = await analyzeWithAI(info.textContent, url, info, options.anthropicApiKey);
 
   // 5. 決定商家類型（AI 優先，regex 備用）
   const businessType = aiResult?.type || guessBusinessType(info);
@@ -114,9 +110,10 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
 async function analyzeWithAI(
   textContent: string,
   url: string,
-  info: ExtractedInfo
+  info: ExtractedInfo,
+  anthropicApiKey?: string | null
 ): Promise<AIAnalysis | null> {
-  const apiKey = await getAnthropicKey();
+  const apiKey = anthropicApiKey || null;
   if (!apiKey) {
     console.log('[AEO] 無 Anthropic API Key，使用 regex 模式');
     return null;

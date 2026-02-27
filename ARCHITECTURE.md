@@ -9,17 +9,18 @@
   - `functions/api/aeo/directory.ts`
   - `functions/aeo/shops/[shopId]/llms.txt.ts`
 - **KV (`AEO_KV`)**:
-  - Rate limit counter
   - 掃描結果快取
   - llms.txt 文本
   - directory 索引
+- **Durable Object (`RateLimiterDO`)**:
+  - 每 IP 每分鐘原子計數（rate limit）
 
 ## Data Flow
 
 1. 使用者在 UI 輸入 URL。
 2. 前端 POST 到 `/api/aeo/scan`。
-3. Function 先用 `CF-Connecting-IP` 做 per-minute rate limit：
-   - key: `AEO_RL:{ip}:{minuteBucket}`
+3. Function 先用 `CF-Connecting-IP` 查詢 `RateLimiterDO`：
+   - 超限回 `429` + `Retry-After`
 4. 做 URL normalization（去 hash、去 utm_*、統一路徑尾斜線）
 5. 查詢 cache：
    - key: `AEO_CACHE:{normalizedUrl}`
@@ -31,9 +32,10 @@
    - `AEO_DIRECTORY`（最近掃描索引）
 8. 前端顯示結果；若 cached 會顯示快取命中。
 
-## Why KV + Functions
+## Why KV + Durable Object + Functions
 
 - 符合 Cloudflare Pages 無常駐 Node server 的模式。
-- 免費版可直接實現可調整的 rate limit + cache。
+- 免費版可實現可調整的 rate limit + cache。
+- Rate limit 由 DO 提供原子計數，避免 KV 先讀後寫的併發穿透。
 - 不依賴本機檔案系統（不使用 fs 持久化）。
 

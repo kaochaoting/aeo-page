@@ -6,3 +6,11 @@ pages_build_output_dir = "public"
 binding = "AEO_KV"
 id = "REPLACE_WITH_PROD_KV_NAMESPACE_ID"
 preview_id = "REPLACE_WITH_PREVIEW_KV_NAMESPACE_ID"
+
+[[durable_objects.bindings]]
+name = "AEO_RATE_LIMITER"
+class_name = "RateLimiterDO"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiterDO"]
