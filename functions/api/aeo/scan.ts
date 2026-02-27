@@ -126,3 +126,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return Response.json({ error: `掃描失敗：${msg}` }, { status: 500 });
   }
 };
+
+
+export const onRequestGet: PagesFunction = async () => {
+  return Response.json({ error: 'Method not allowed' }, { status: 405 });
+};
