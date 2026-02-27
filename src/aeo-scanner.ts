@@ -225,13 +225,13 @@ async function fetchWebsite(url: string): Promise<string> {
       headers: {
         'User-Agent': 'AEO-Scanner/2.0 (AI-Friendliness Checker; +https://aeo.page)',
         'Accept': 'text/html,application/xhtml+xml',
-        'Accept-Language': 'ja,en;q=0.9,zh-TW;q=0.8',
+        'Accept-Language': 'en,zh-TW;q=0.9',
       },
       redirect: 'follow',
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    // 處理日文網站常見的 Shift_JIS / EUC-JP 編碼
+    // Handle non-UTF8 pages when charset is declared
     const contentType = res.headers.get('content-type') || '';
     const arrayBuffer = await res.arrayBuffer();
 
@@ -249,9 +249,6 @@ async function fetchWebsite(url: string): Promise<string> {
     }
 
     const charsetMap: Record<string, string> = {
-      'shift_jis': 'shift_jis', 'shiftjis': 'shift_jis', 'sjis': 'shift_jis', 'x-sjis': 'shift_jis',
-      'euc-jp': 'euc-jp', 'eucjp': 'euc-jp', 'x-euc-jp': 'euc-jp',
-      'iso-2022-jp': 'iso-2022-jp',
       'utf-8': 'utf-8', 'utf8': 'utf-8',
     };
     const decoderCharset = charsetMap[charset] || charset;
