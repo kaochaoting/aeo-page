@@ -1,0 +1,16 @@
+name = "aeo-page"
+compatibility_date = "2024-11-12"
+pages_build_output_dir = "public"
+
+[[kv_namespaces]]
+binding = "AEO_KV"
+id = "REPLACE_WITH_PROD_KV_NAMESPACE_ID"
+preview_id = "REPLACE_WITH_PREVIEW_KV_NAMESPACE_ID"
+
+[[durable_objects.bindings]]
+name = "AEO_RATE_LIMITER"
+class_name = "RateLimiterDO"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiterDO"]

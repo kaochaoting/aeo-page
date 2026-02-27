@@ -1,17 +1,19 @@
 /**
  * AEO Routes — Hono 路由
- * 提供掃描 API、llms.txt 託管、目錄查詢
+ * 提供掃描 API（Bun 本地模式）
  */
 
 import { Hono } from 'hono';
-import { scanWebsite, getDirectory, getShopLlmsTxt } from './aeo-scanner';
+import { scanWebsite, urlToShopId } from './aeo-scanner';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
+
+const memoryDirectory: any[] = [];
+const memoryLlms = new Map<string, string>();
 
 export function createAeoRoutes() {
   const aeo = new Hono();
 
-  // POST /api/aeo/scan — 掃描網站
   aeo.post('/scan', async (c) => {
     try {
       const body = await c.req.json();
@@ -27,46 +29,41 @@ export function createAeoRoutes() {
         return c.json({ error: '網址格式不正確' }, 400);
       }
 
-      const result = await scanWebsite(validUrl);
+      const result = await scanWebsite(validUrl, { anthropicApiKey: process.env.ANTHROPIC_API_KEY });
+      const shopId = urlToShopId(validUrl);
+      result.hostedUrl = `${new URL(c.req.url).origin}/aeo/shops/${shopId}/llms.txt`;
 
-      const origin = new URL(c.req.url).origin;
-      if (result.hostedUrl) {
-        result.hostedUrl = origin + result.hostedUrl;
-      }
+      if (result.llmsTxt) memoryLlms.set(shopId, result.llmsTxt);
+      const entry = {
+        id: shopId,
+        name: result.businessName,
+        type: result.businessType,
+        url: result.url,
+        score: result.score,
+        aiAnalyzed: result.aiAnalyzed,
+        scannedAt: result.scannedAt,
+      };
+      const idx = memoryDirectory.findIndex((s) => s.id === shopId);
+      if (idx >= 0) memoryDirectory[idx] = entry;
+      else memoryDirectory.unshift(entry);
 
-      return c.json(result);
-
+      return c.json({ ...result, cached: false });
     } catch (err: any) {
       console.error('[AEO] 掃描失敗:', err.message);
-
-      if (err.message?.includes('abort') || err.message?.includes('timeout')) {
-        return c.json({ error: '網站連線逾時，請確認網址正確' }, 504);
-      }
-      if (err.message?.includes('HTTP 4') || err.message?.includes('HTTP 5')) {
-        return c.json({ error: `網站回傳錯誤：${err.message}` }, 502);
-      }
-
       return c.json({ error: '掃描失敗：' + (err.message || '未知錯誤') }, 500);
     }
   });
 
-  // GET /api/aeo/directory — 取得目錄
-  aeo.get('/directory', (c) => {
-    const directory = getDirectory();
-    return c.json(directory);
-  });
+  aeo.get('/directory', (c) => c.json(memoryDirectory));
 
   return aeo;
 }
 
-// llms.txt 託管 + 前端頁面路由
 export function createAeoStaticRoutes() {
   const routes = new Hono();
 
-  // 每個店家的 llms.txt
   routes.get('/shops/:shopId/llms.txt', (c) => {
-    const shopId = c.req.param('shopId');
-    const content = getShopLlmsTxt(shopId);
+    const content = memoryLlms.get(c.req.param('shopId'));
     if (!content) return c.text('Not found', 404);
     return c.text(content, 200, {
       'Content-Type': 'text/plain; charset=utf-8',
@@ -74,12 +71,10 @@ export function createAeoStaticRoutes() {
     });
   });
 
-  // AEO 首頁
   routes.get('/', (c) => {
     const htmlPath = resolve(import.meta.dir, '../public/aeo.html');
     if (!existsSync(htmlPath)) return c.text('AEO page not found', 404);
-    const html = readFileSync(htmlPath, 'utf-8');
-    return c.html(html);
+    return c.html(readFileSync(htmlPath, 'utf-8'));
   });
 
   return routes;

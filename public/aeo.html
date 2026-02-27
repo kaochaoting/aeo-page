@@ -13,7 +13,6 @@
 <meta property="og:description" content="Free AI-friendliness scanner. Paste your URL, get a score out of 100, and generate JSON-LD, llms.txt, FAQ Schema to help AI recommend your business.">
 <meta property="og:url" content="https://api.washinmura.jp/aeo">
 <meta property="og:locale" content="en_US">
-<meta property="og:locale:alternate" content="ja_JP">
 <meta property="og:locale:alternate" content="zh_TW">
 <meta property="og:site_name" content="AEO.page">
 <meta name="twitter:card" content="summary">
@@ -26,12 +25,12 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "AEO.page",
-  "alternateName": ["Agent Engine Optimization", "AEO ページ"],
+  "alternateName": ["Agent Engine Optimization", "AEO Page"],
   "url": "https://api.washinmura.jp/aeo",
   "description": "Free AI-friendliness scanner for websites. Diagnoses discoverability issues and generates JSON-LD, llms.txt, and FAQ Schema so AI assistants like ChatGPT, Claude, and Perplexity can find and recommend your business.",
   "applicationCategory": "SEO Tool",
   "operatingSystem": "Web",
-  "inLanguage": ["en", "ja", "zh-TW"],
+  "inLanguage": ["en", "zh-TW"],
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -91,14 +90,6 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "llms.txt is an emerging standard (like robots.txt for search engines) that helps AI agents quickly understand what a website is about. AEO.page auto-generates and hosts llms.txt for every scanned website."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "AEOとは何ですか？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "AEO（Agent Engine Optimization）は、ChatGPT、Claude、PerplexityなどのAIアシスタントにあなたのウェブサイトを発見してもらうための最適化です。SEOが検索エンジン向けなら、AEOはAI向けの最適化です。URLを入力するだけで、JSON-LD、llms.txt、FAQ Schemaを自動生成します。すべて無料です。"
       }
     },
     {
@@ -397,8 +388,7 @@
       When someone asks ChatGPT to recommend a restaurant, a hotel, or a local shop — does AI know you exist?<br>
       Paste your URL. We'll scan it, score it, and generate the fix code. Free.
       <span class="lang-alt">
-        貼上你的網址，AI 幫你診斷問題並生成修復代碼。免費。<br>
-        URLを貼るだけ。AIがあなたのサイトを診断し、修正コードを自動生成します。無料。
+        貼上你的網址，AI 幫你診斷問題並生成修復代碼。免費。
       </span>
     </p>
     <div class="scan-box">
@@ -426,6 +416,7 @@
       <div class="url" id="resultUrl"></div>
       <div class="score" id="scoreNum">--</div>
       <div class="score-label">AI-Friendliness Score / 100</div>
+      <div id="cacheStatus" style="margin-top:8px;color: var(--text2); font-size:0.85rem;"></div>
     </div>
 
     <!-- Issues -->
@@ -536,8 +527,14 @@ async function startScan() {
       body: JSON.stringify({ url })
     });
 
-    if (!res.ok) throw new Error(`Scan failed (${res.status})`);
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('Retry-After') || '60';
+        throw new Error(`Rate limit exceeded. Please retry after ${retryAfter}s`);
+      }
+      throw new Error(data.error || `Scan failed (${res.status})`);
+    }
     displayResults(url, data);
 
   } catch (err) {
@@ -554,6 +551,7 @@ function displayResults(url, data) {
   const scoreEl = document.getElementById('scoreNum');
   const score = data.score || 0;
   scoreEl.textContent = score;
+  document.getElementById('cacheStatus').textContent = data.cached ? 'Cached result (24h): HIT' : 'Fresh scan: MISS';
   scoreEl.className = 'score ' + (score >= 70 ? 'score-high' : score >= 40 ? 'score-mid' : 'score-low');
 
   const issuesList = document.getElementById('issuesList');

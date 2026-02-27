@@ -4,8 +4,6 @@
  * 無 AI Key 時自動降級為 regex 模式
  */
 
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
 
 // === 型別定義 ===
 
@@ -62,29 +60,14 @@ interface AIAnalysis {
   faq: Array<{ q: string; a: string }>;
 }
 
-// === 儲存目錄 ===
-const DATA_DIR = resolve(import.meta.dir, '../data/aeo');
-const SHOPS_DIR = resolve(DATA_DIR, 'shops');
 
-function ensureDirs() {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-  if (!existsSync(SHOPS_DIR)) mkdirSync(SHOPS_DIR, { recursive: true });
-}
-
-// === 取得 Anthropic API Key ===
-
-async function getAnthropicKey(): Promise<string | null> {
-  if (process.env.ANTHROPIC_API_KEY) {
-    return process.env.ANTHROPIC_API_KEY;
-  }
-  return null;
+interface ScanOptions {
+  anthropicApiKey?: string | null;
 }
 
 // === 主掃描函式 ===
 
-export async function scanWebsite(url: string): Promise<ScanResult> {
-  ensureDirs();
-
+export async function scanWebsite(url: string, options: ScanOptions = {}): Promise<ScanResult> {
   // 1. 抓取網頁
   const html = await fetchWebsite(url);
 
@@ -95,7 +78,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
   const { score, issues } = analyzeScore(info);
 
   // 4. 嘗試 AI 分析（用於產出高品質內容）
-  const aiResult = await analyzeWithAI(info.textContent, url, info);
+  const aiResult = await analyzeWithAI(info.textContent, url, info, options.anthropicApiKey);
 
   // 5. 決定商家類型（AI 優先，regex 備用）
   const businessType = aiResult?.type || guessBusinessType(info);
@@ -103,11 +86,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
   // 6. 生成結構化數據（AI 結果 + regex 結果混合）
   const generated = generateStructuredData(url, info, businessType, aiResult);
 
-  // 7. 儲存 llms.txt
-  const shopId = urlToShopId(url);
-  const hostedUrl = saveLlmsTxt(shopId, generated.llmsTxt);
-
-  // 8. 組裝結果
+  // 7. 組裝結果（儲存交由 runtime：Cloudflare KV / app DB）
   const businessName = aiResult?.name || info.title || new URL(url).hostname;
   const result: ScanResult = {
     url,
@@ -115,7 +94,7 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
     businessName,
     businessType,
     issues,
-    hostedUrl,
+    hostedUrl: null,
     jsonld: generated.jsonld,
     ogTags: generated.ogTags,
     faqSchema: generated.faqSchema,
@@ -123,9 +102,6 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
     scannedAt: new Date().toISOString(),
     aiAnalyzed: !!aiResult,
   };
-
-  saveShopData(shopId, result);
-
   return result;
 }
 
@@ -134,9 +110,10 @@ export async function scanWebsite(url: string): Promise<ScanResult> {
 async function analyzeWithAI(
   textContent: string,
   url: string,
-  info: ExtractedInfo
+  info: ExtractedInfo,
+  anthropicApiKey?: string | null
 ): Promise<AIAnalysis | null> {
-  const apiKey = await getAnthropicKey();
+  const apiKey = anthropicApiKey || null;
   if (!apiKey) {
     console.log('[AEO] 無 Anthropic API Key，使用 regex 模式');
     return null;
@@ -152,38 +129,38 @@ async function analyzeWithAI(
     `\n--- 頁面內容 ---\n${textContent.slice(0, 3000)}`,
   ].filter(Boolean).join('\n');
 
-  const prompt = `あなたはウェブサイト分析のプロです。以下のウェブサイト情報から、ビジネス情報を抽出してください。
+  const prompt = `You are a website analysis expert. Extract business information from the context below.
 
 ${pageContext}
 
-以下のJSON形式「だけ」を出力してください（説明文なし、JSONのみ）：
+Return JSON only (no markdown, no explanation):
 
 {
-  "name": "正式な店名・施設名（日本語）",
+  "name": "Official business name",
   "nameEn": "English name (best guess from context)",
   "type": "Schema.org type: Restaurant, Store, LodgingBusiness, BeautySalon, MedicalBusiness, TouristAttraction, SportsActivityLocation, EducationalOrganization, or LocalBusiness",
-  "description": "このビジネスの説明（80文字以内、日本語）",
-  "descriptionEn": "English description (80 chars max)",
-  "address": "住所（見つかれば。日本の住所形式で）",
-  "telephone": "電話番号（見つかれば）",
-  "hours": "営業時間（見つかれば）",
-  "features": ["このビジネスの特徴・強み（3〜5個）"],
-  "products": ["主な商品・サービス（3〜8個）"],
-  "story": "このビジネスの魅力を2〜3文で表現。観光客やAIアシスタントが引用したくなるような紹介文。",
+  "description": "Primary description (max 80 chars)",
+  "descriptionEn": "English description (max 80 chars)",
+  "address": "Address or null",
+  "telephone": "Phone number or null",
+  "hours": "Opening hours or null",
+  "features": ["3-5 concrete strengths"],
+  "products": ["3-8 products or services"],
+  "story": "2-3 factual sentences suitable for AI citation",
   "faq": [
-    {"q": "このビジネスに関するよくある質問1", "a": "具体的で役立つ回答"},
-    {"q": "質問2", "a": "回答2"},
-    {"q": "質問3", "a": "回答3"},
-    {"q": "質問4", "a": "回答4"},
-    {"q": "質問5", "a": "回答5"}
+    {"q": "Useful question 1", "a": "Helpful answer 1"},
+    {"q": "Useful question 2", "a": "Helpful answer 2"},
+    {"q": "Useful question 3", "a": "Helpful answer 3"},
+    {"q": "Useful question 4", "a": "Helpful answer 4"},
+    {"q": "Useful question 5", "a": "Helpful answer 5"}
   ]
 }
 
-重要ルール：
-- 情報がないフィールドは null にする
-- 推測は最小限に。ウェブサイトの内容から確認できる情報を優先
-- FAQ は実際に役立つ質問（「どこにありますか？」「予約は必要？」「駐車場はある？」「おすすめ商品は？」等）
-- story は事実に基づいた魅力的な紹介文にする`;
+Rules:
+- Use null for unknown fields.
+- Minimize guessing; prioritize verifiable facts from the page.
+- Keep FAQ practical (location, booking, parking, pricing, offerings).
+- Keep story factual and specific.`;
 
   try {
     console.log('[AEO] AI 分析中...', url);
@@ -472,14 +449,14 @@ function guessBusinessType(info: ExtractedInfo): string {
   const text = (info.title + ' ' + info.description + ' ' + info.textContent).toLowerCase();
 
   const types: [string, string[]][] = [
-    ['Restaurant', ['レストラン', 'restaurant', '食堂', 'ランチ', 'ディナー', 'メニュー', '料理', 'カフェ', 'cafe', 'ラーメン', '寿司', 'sushi', '居酒屋', 'bar', '焼肉', 'バー']],
-    ['LodgingBusiness', ['ホテル', 'hotel', '旅館', '民宿', 'グランピング', 'glamping', '宿泊', 'チェックイン', 'check-in', 'inn', '温泉', 'リゾート', 'resort', 'ゲストハウス']],
-    ['Store', ['ショップ', 'shop', 'store', '通販', '販売', '商品', '購入', 'buy', 'cart', 'お店']],
-    ['BeautySalon', ['サロン', 'salon', '美容', 'beauty', 'ヘア', 'hair', 'ネイル', 'nail', 'エステ', 'spa']],
-    ['MedicalBusiness', ['クリニック', 'clinic', '病院', 'hospital', '歯科', 'dental', '医療', 'medical', '薬局', 'pharmacy']],
-    ['SportsActivityLocation', ['ジム', 'gym', 'fitness', 'ヨガ', 'yoga', 'スポーツ', 'sports', 'ゴルフ', 'golf']],
-    ['EducationalOrganization', ['スクール', 'school', '教室', '塾', '学校', 'academy', 'レッスン', 'lesson']],
-    ['TouristAttraction', ['観光', 'tourism', '体験', 'experience', '遊び', 'アクティビティ', 'activity', '見学']],
+    ['Restaurant', ['restaurant', 'food', 'dining', 'menu', 'cafe', 'sushi', 'bar', 'bbq', 'eat']],
+    ['LodgingBusiness', ['hotel', 'motel', 'inn', 'glamping', 'stay', 'check-in', 'resort', 'guesthouse']],
+    ['Store', ['shop', 'store', 'product', 'buy', 'cart', 'ecommerce', 'retail']],
+    ['BeautySalon', ['salon', 'beauty', 'hair', 'nail', 'spa', 'stylist']],
+    ['MedicalBusiness', ['clinic', 'hospital', 'dental', 'medical', 'pharmacy', 'health']],
+    ['SportsActivityLocation', ['gym', 'fitness', 'yoga', 'sports', 'golf', 'training']],
+    ['EducationalOrganization', ['school', 'academy', 'course', 'lesson', 'education', 'training']],
+    ['TouristAttraction', ['tourism', 'attraction', 'experience', 'activity', 'travel', 'visit']],
   ];
 
   for (const [type, keywords] of types) {
@@ -515,17 +492,17 @@ function generateStructuredData(
   if (descEn) llmsTxt += `> ${descEn}\n`;
   llmsTxt += '\n';
   llmsTxt += `- URL: ${url}\n`;
-  if (addr) llmsTxt += `- 住所: ${addr}\n`;
+  if (addr) llmsTxt += `- Address: ${addr}\n`;
   if (tel) llmsTxt += `- TEL: ${tel}\n`;
-  if (ai?.hours) llmsTxt += `- 営業時間: ${ai.hours}\n`;
+  if (ai?.hours) llmsTxt += `- Opening Hours: ${ai.hours}\n`;
   llmsTxt += '\n';
 
   if (ai?.story) {
-    llmsTxt += `## 紹介\n\n${ai.story}\n\n`;
+    llmsTxt += `## Story\n\n${ai.story}\n\n`;
   }
 
   if (ai?.features && ai.features.length > 0) {
-    llmsTxt += `## 特徴\n\n`;
+    llmsTxt += `## Features\n\n`;
     for (const f of ai.features) {
       llmsTxt += `- ${f}\n`;
     }
@@ -533,7 +510,7 @@ function generateStructuredData(
   }
 
   if (ai?.products && ai.products.length > 0) {
-    llmsTxt += `## 商品・サービス\n\n`;
+    llmsTxt += `## Products & Services\n\n`;
     for (const p of ai.products) {
       llmsTxt += `- ${p}\n`;
     }
@@ -541,7 +518,7 @@ function generateStructuredData(
   }
 
   if (ai?.faq && ai.faq.length > 0) {
-    llmsTxt += `## よくある質問\n\n`;
+    llmsTxt += `## FAQ\n\n`;
     for (const f of ai.faq) {
       llmsTxt += `**Q: ${f.q}**\nA: ${f.a}\n\n`;
     }
@@ -566,7 +543,7 @@ function generateStructuredData(
   };
   if (nameEn) jsonldObj.alternateName = nameEn;
   if (tel) jsonldObj.telephone = tel;
-  if (addr && /[都道府県市区町村郡]/.test(addr)) {
+  if (addr) {
     jsonldObj.address = { "@type": "PostalAddress", "description": addr };
   }
   if (image) jsonldObj.image = image;
@@ -586,9 +563,9 @@ ${image ? `<meta property="og:image" content="${escapeHtml(image)}">` : ''}
 
   // --- FAQ Schema ---
   const faqEntries = ai?.faq?.length ? ai.faq : [
-    { q: `${name} はどこにありますか？`, a: addr || `${url} をご覧ください。` },
-    { q: '営業時間は？', a: ai?.hours || `詳細は ${url} をご確認ください。` },
-    { q: '予約は必要ですか？', a: `詳細は ${url} をご確認いただくか、直接お問い合わせください。${tel ? ' TEL: ' + tel : ''}` },
+    { q: `Where is ${name} located?`, a: addr || `Please check ${url}.` },
+    { q: 'What are your opening hours?', a: ai?.hours || `Please check details at ${url}.` },
+    { q: 'Do I need a reservation?', a: `Please check ${url} or contact directly.${tel ? ' TEL: ' + tel : ''}` },
   ];
 
   const faqSchema = `<script type="application/ld+json">
@@ -613,65 +590,8 @@ ${faqEntries.map(f => `    {
 
 // === 儲存與讀取 ===
 
-function urlToShopId(url: string): string {
+export function urlToShopId(url: string): string {
   return new URL(url).hostname.replace(/\./g, '-').replace(/^www-/, '');
-}
-
-function saveLlmsTxt(shopId: string, content: string): string {
-  ensureDirs();
-  const shopDir = resolve(SHOPS_DIR, shopId);
-  if (!existsSync(shopDir)) mkdirSync(shopDir, { recursive: true });
-  writeFileSync(resolve(shopDir, 'llms.txt'), content, 'utf-8');
-  return `/aeo/shops/${shopId}/llms.txt`;
-}
-
-function saveShopData(shopId: string, data: ScanResult) {
-  ensureDirs();
-  const shopDir = resolve(SHOPS_DIR, shopId);
-  if (!existsSync(shopDir)) mkdirSync(shopDir, { recursive: true });
-  writeFileSync(resolve(shopDir, 'data.json'), JSON.stringify(data, null, 2), 'utf-8');
-  updateDirectory(shopId, data);
-}
-
-function updateDirectory(shopId: string, data: ScanResult) {
-  const indexPath = resolve(DATA_DIR, 'directory.json');
-  let directory: any[] = [];
-  if (existsSync(indexPath)) {
-    try { directory = JSON.parse(readFileSync(indexPath, 'utf-8')); } catch {}
-  }
-
-  const existing = directory.findIndex(s => s.id === shopId);
-  const entry = {
-    id: shopId,
-    name: data.businessName,
-    type: data.businessType,
-    url: data.url,
-    score: data.score,
-    aiAnalyzed: data.aiAnalyzed,
-    scannedAt: data.scannedAt,
-  };
-
-  if (existing >= 0) {
-    directory[existing] = entry;
-  } else {
-    directory.push(entry);
-  }
-
-  writeFileSync(indexPath, JSON.stringify(directory, null, 2), 'utf-8');
-}
-
-// === 讀取目錄 ===
-
-export function getDirectory(): any[] {
-  const indexPath = resolve(DATA_DIR, 'directory.json');
-  if (!existsSync(indexPath)) return [];
-  try { return JSON.parse(readFileSync(indexPath, 'utf-8')); } catch { return []; }
-}
-
-export function getShopLlmsTxt(shopId: string): string | null {
-  const filePath = resolve(SHOPS_DIR, shopId, 'llms.txt');
-  if (!existsSync(filePath)) return null;
-  return readFileSync(filePath, 'utf-8');
 }
 
 // === 工具 ===
